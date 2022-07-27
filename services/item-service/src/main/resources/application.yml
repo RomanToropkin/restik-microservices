@@ -8,3 +8,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/restik
     username: restik-items
     password: pass1234
+
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      group-id: item-service
+      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
