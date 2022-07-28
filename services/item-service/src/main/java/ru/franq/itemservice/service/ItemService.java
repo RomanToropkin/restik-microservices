@@ -1,6 +1,7 @@
 package ru.franq.itemservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.franq.itemservice.data.CreateItemDto;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemService {
 
     private final ItemRepository itemRepository;
@@ -51,6 +53,7 @@ public class ItemService {
                             .build();
                     itemsIngredientRepository.saveAndFlush(itemIngr);
                 });
+        log.info("Successful create item with id: %s".formatted(item.getId()));
         return item;
     }
 

@@ -1,0 +1,22 @@
+server:
+  port: 9200
+  address: 0.0.0.0
+spring:
+  application:
+    name: item-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/restik
+    username: restik-items
+    password: pass1234
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      auto-offset-reset: earliest
+      group-id: item-service
+      value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+item-service:
+  topic: action-topic

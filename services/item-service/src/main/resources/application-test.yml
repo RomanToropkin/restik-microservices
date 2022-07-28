@@ -16,3 +16,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonSerializer
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+item-service:
+  topic: test-topic

@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.franq.itemservice.data.CreateItemDto;
-import ru.franq.itemservice.data.event.Event;
+import org.springframework.test.context.ActiveProfiles;
 import ru.franq.itemservice.persistence.entity.Item;
 
-@SpringBootTest
+@SpringBootTest()
+@ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @DirtiesContext
 @Import({TestKafkaConfig.class})
@@ -39,9 +39,8 @@ class KafkaTestWithContainers {
                 .fat(2)
                 .carbohydrates(3)
                 .build();
-        var event = new Event("Test", item);
 
-        producer.sendEvent(TEST_TOPIC, event);
+        producer.sendEvent("test-event", item);
 
         ConsumerRecord<Integer, String> singleRecord = KafkaTestUtils.getSingleRecord(consumer, TEST_TOPIC);
         log.info("Get data: "+singleRecord.value());
