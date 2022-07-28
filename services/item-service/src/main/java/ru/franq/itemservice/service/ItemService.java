@@ -2,6 +2,8 @@ package ru.franq.itemservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.franq.itemservice.data.CreateItemDto;
@@ -11,6 +13,7 @@ import ru.franq.itemservice.persistence.entity.ItemsIngredientId;
 import ru.franq.itemservice.persistence.repos.IngredientRepository;
 import ru.franq.itemservice.persistence.repos.ItemRepository;
 import ru.franq.itemservice.persistence.repos.ItemsIngredientRepository;
+import ru.franq.itemservice.redis.repo.ItemRedisRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -24,8 +27,10 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final IngredientRepository ingredientRepository;
     private final ItemsIngredientRepository itemsIngredientRepository;
+    private final ItemRedisRepository itemRedisRepository;
 
     @Transactional
+    @CachePut(value = "item", key = "#result.id")
     public Item createItem(CreateItemDto dto) {
         var item = Item.builder()
                 .id(UUID.randomUUID().toString())
@@ -55,6 +60,13 @@ public class ItemService {
                 });
         log.info("Successful create item with id: %s".formatted(item.getId()));
         return item;
+    }
+
+    @Cacheable(value = "item", key = "#uuid")
+    @Transactional(readOnly = true)
+    public Item getItemByUuid(String uuid){
+        return itemRepository.findById(uuid)
+                .orElseThrow(() -> new EntityNotFoundException("Еды с uuid = %s не найдено".formatted(uuid)));
     }
 
 }

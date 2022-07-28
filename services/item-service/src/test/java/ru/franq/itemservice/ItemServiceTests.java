@@ -44,7 +44,7 @@ public class ItemServiceTests {
 
     @BeforeEach
     public void setUp() {
-        itemService = new ItemService(itemRepository, ingredientRepository, itemsIngredientRepository);
+        itemService = new ItemService(itemRepository, ingredientRepository, itemsIngredientRepository, null);
         var ingList = new ArrayList<String>();
         ingList.add("id1");
         ingList.add("id2");

@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +25,11 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+@RedisHash("item")
+public class Item implements Serializable {
+
+    private static final long serialVersionUID = 7156526077883281623L;
+
     @Id
     @Column(name = "uuid", nullable = false)
     private String id = UUID.randomUUID().toString();
@@ -58,5 +64,11 @@ public class Item {
 
     @Column(name = "is_removed", nullable = false)
     private Boolean isRemoved = false;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "items_ingredients", schema = "main",
+            joinColumns = {@JoinColumn(name = "items_uuid")},
+            inverseJoinColumns = {@JoinColumn(name = "ingredients_uuid")})
+    private List<Ingredient> ingredients = new ArrayList<>();
 
 }
